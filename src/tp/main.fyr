@@ -1,0 +1,5 @@
+func Main() {
+	for i := 0; i < 100; i++ {
+		var arr []int = [1]
+	}
+}

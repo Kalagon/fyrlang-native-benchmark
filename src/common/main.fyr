@@ -1,0 +1,4 @@
+extern "C" {
+	export func srand(seed uint) void
+	export func rand()
+}
