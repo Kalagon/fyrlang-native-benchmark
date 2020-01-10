@@ -2,6 +2,10 @@
 
 source .env
 
+if [[ "$DEBUG" ]]; then
+	DEBUGFLAGS="-v"
+fi
+
 PACKAGE=$1
 if [ -n "$2" ]; then
 	FYR_NATIVE_MALLOC=$2
@@ -10,7 +14,7 @@ fi
 export FYRBASE
 export FYR_NATIVE_MALLOC
 
-$FYRBASE/fyrc -n $PACKAGE
+$FYRBASE/fyrc -n $DEBUGFLAGS $PACKAGE
 
 ##
 # clean the transpiled resources by removing system-dependent paths

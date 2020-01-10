@@ -2,6 +2,12 @@
 
 source .env
 
+if [[ "$DEBUG" ]]; then
+	OPT="-g -Og" # for debugging
+else
+	OPT="-O3"
+fi
+
 COMPILE_PATH=$1
 if [ -n "$2" ]; then
 	FYR_NATIVE_MALLOC=$2
@@ -13,7 +19,7 @@ MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -ipath "*/*$(uname -s)*$(uname -m)*/lib${FYR
 
 cd $COMPILE_PATH
 /usr/bin/gcc \
-	-D_FORTIFY_SOURCE=0 -O3 \
+	-D_FORTIFY_SOURCE=0 $OPT \
 	-I${FYRLIB_NATIVE}include/$FYR_NATIVE_MALLOC \
 	-include malloc.h \
 	-c \
