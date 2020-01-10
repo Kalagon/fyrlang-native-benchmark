@@ -22,5 +22,7 @@ $FYRBASE/fyrc -n $DEBUGFLAGS $PACKAGE
 TRANSPILED_PATH=`echo $PACKAGE | sed 's#src/#transpiled/#g' | sed 's#pkg/*/##g'`
 cp $PACKAGE/pkg/*/*.c $PACKAGE/pkg/*/*.h $TRANSPILED_PATH
 
-sed -i 's|#include ".*/\(\w*\.h\)"|#include "\1"|g' $TRANSPILED_PATH/*.c
+sed -i 's|#include ".*/\(\w*\.h\)"|#include "\1"\n#include "measurement.h"|g' $TRANSPILED_PATH/*.c
 sed -i 's|#include ".*/lib/runtime\.h"||g' $TRANSPILED_PATH/*.h
+
+sed -i 's|123456789|EVAL_LOOP_RUNS|g' $TRANSPILED_PATH/*.c

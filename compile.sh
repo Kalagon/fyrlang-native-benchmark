@@ -25,6 +25,7 @@ cd $COMPILE_PATH
 	-c \
 	-I${CACHE}/fyrlang/lib/ \
 	-include runtime.h \
+	-I../../src/common \
 	tp.c
 
 mkdir -p bin
@@ -33,4 +34,5 @@ mkdir -p bin
 	tp.o \
 	$CACHE/fyrlang/lib/runtime.a \
 	$MALLOC_ARCHIVE \
+	../../src/common/measurement.c \
 	-lpthread
