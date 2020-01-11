@@ -26,12 +26,12 @@ cd $COMPILE_PATH
 	-I${CACHE}/fyrlang/lib/ \
 	-include runtime.h \
 	-I../../src/common \
-	tp.c
+	*.c
 
 mkdir -p bin
 /usr/bin/gcc \
 	-o bin/$BIN_NAME \
-	tp.o \
+	*.o \
 	$CACHE/fyrlang/lib/runtime.a \
 	$MALLOC_ARCHIVE \
 	../../src/common/measurement.c \
