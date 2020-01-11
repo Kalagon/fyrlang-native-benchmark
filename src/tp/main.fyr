@@ -1,5 +1,9 @@
 func Main() {
-	for i := 0; i < 100; i++ {
-		var arr []int = [1]
+	for i := 0; i < 123456789; i++ {
+		var arr1 []int = [1]
+		var arr2 []int = [1, 2]
+		var arr3 []int = [1, 2, 3]
+		var arr4 []int = [1, 2, 3, 4]
+		var arr5 []int = [1, 2, 3, 4, 5]
 	}
 }
