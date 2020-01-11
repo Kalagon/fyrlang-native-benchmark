@@ -1,6 +1,6 @@
 #include <time.h>
 
-#define EVAL_LOOP_RUNS 10000
+#define EVAL_LOOP_RUNS 1000
 
 extern clock_t startTime;
 
