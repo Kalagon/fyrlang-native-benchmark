@@ -2,3 +2,6 @@
 **/bin/
 **/pkg/
 *.o
+
+# exclude logs folder for now
+/logs
