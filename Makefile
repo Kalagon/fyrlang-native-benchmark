@@ -1,4 +1,4 @@
-MODULES = tp
+MODULES = tp tp_small
 
 all: all_manual all_auto
 
@@ -30,10 +30,12 @@ list_targets:
 ##
 
 simulated/tp/bin/tp: simulated/tp/tp.c
+simulated/tp_small/bin/tp_small: simulated/tp_small/tp_small.c
 $(foreach module,$(MODULES),simulated/$(module)/bin/$(module)): src/common/*.c src/common/*.h
 	./compile.sh simulated/$(notdir $@)
 
 optimized/tp/bin/tp: optimized/tp/tp.c
+optimized/tp_small/bin/tp_small: optimized/tp_small/tp_small.c
 $(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): optimized/tp/tp.c src/common/*.c src/common/*.h
 	./compile.sh optimized/$(notdir $@)
 
@@ -43,8 +45,11 @@ $(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): optimized/tp/tp.
 ##
 
 transpiled/tp/bin/tp: transpiled/tp/tp.c
+transpiled/tp_small/bin/tp_small: transpiled/tp_small/tp_small.c
 $(foreach module,$(MODULES),transpiled/$(module)/bin/$(module)):
 	./compile.sh transpiled/$(notdir $@)
 
 transpiled/tp/tp.c: src/tp/main.fyr
+transpiled/tp_small/tp_small.c: src/tp_small/main.fyr
+transpiled/%.c:
 	./transpile.sh src/$(basename $(notdir $@))
