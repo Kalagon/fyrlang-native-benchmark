@@ -3,6 +3,8 @@
 /runtime/system/
 **/bin/
 **/pkg/
+*.a
+!/runtime/**/*.a
 *.o
 
 # exclude logs folder for now
