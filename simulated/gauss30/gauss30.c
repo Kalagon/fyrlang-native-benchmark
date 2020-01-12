@@ -51,7 +51,7 @@ void Main_a893a1c3729779a9d1de343fc1ad3c902c58006a1b99d00ad57beb47e8e69d96() {
     uintptr_t v_g_2;
     v_g_2 = 0;
     for (;;) {
-        bool tmp_3 = v_i < EVAL_LOOP_RUNS;
+        bool tmp_3 = v_i < GAUSS_EVAL_LOOP_RUNS;
         bool tmp_4 = !tmp_3;
         if (tmp_4) {
             break;
@@ -65,12 +65,12 @@ void Main_a893a1c3729779a9d1de343fc1ad3c902c58006a1b99d00ad57beb47e8e69d96() {
         v_s = 0;
         for (;;) {
             int tmp_8 = v_order.size;
-            bool tmp_9 = v_s < tmp_8;
+            bool tmp_9 = v_s < GAUSS_INNER_LOOP_RUNS;
             bool tmp_10 = !tmp_9;
             if (tmp_10) {
                 break;
             };
-            int tmp_11 = (v_order.ptr)[v_s];
+            int tmp_11 = (v_order.ptr)[v_s % tmp_8];
             t_7c8c88665f5d7d690e67ae72d2de5b3729538848f0d1729c0f9e9f844488bf08 tmp_12 = (t_7c8c88665f5d7d690e67ae72d2de5b3729538848f0d1729c0f9e9f844488bf08){(int*)Malloc_5cdcff11cc4fe0b7702dcefd8e40a3205be2181cfbca6974337e1a1f974cd4e8(tmp_11, sizeof(int), &v_g_2), 1, 1};
             v_gv_arr = &v_g_2;
             v_arr = tmp_12;
