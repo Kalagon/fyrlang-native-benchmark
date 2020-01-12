@@ -2,15 +2,28 @@
 
 This repository contains the code used to benchmark the [Fyr](https://github.com/vs-ude/fyrlang) compiler memory allocator performance.
 
+## Prerequisites
+
+For full functionality the following binaries and libraries need to be provided by the system:
+- gcc
+- [perf](https://perf.wiki.kernel.org/index.php/Main_Page)
+- GNU time
+- [libtcmalloc](https://github.com/gperftools/gperftools)
+	- [pprof](https://github.com/google/pprof) for viewing heap profiles
+- Fyr compiler
+- Fyr native libraries
+
 ## Run
 
 Setup the `fyrlang-native-libs`.  
-Setup the `.env` file byt copying `.env_example` and filling in the correct values.  
+Setup the `.env` file by copying `.env_example` and filling in the correct values.  
 
 Run
 ```
-make -B FYR_NATIVE_MALLOC=jemalloc bench
-make -B FYR_NATIVE_MALLOC=tcmalloc bench
+make -B FYR_NATIVE_MALLOC=jemalloc all
+make -B FYR_NATIVE_MALLOC=jemalloc bench_all
+make -B FYR_NATIVE_MALLOC=tcmalloc all
+make -B FYR_NATIVE_MALLOC=tcmalloc bench_all
 ```
 
 Now you can inspect the logfiles in `logs/`.
