@@ -1,4 +1,7 @@
 MODULES = tp tp_small
+ifdef SET_TIMESTAMP
+TIMESTAMP = "_$(shell date +%F_%H%M%S)"
+endif
 
 all: all_manual all_auto
 
@@ -17,7 +20,7 @@ bench: \
 perf/%: all_manual
 	mkdir -p logs/perf/$(notdir $@)
 	perf stat -d -r 10 --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
-	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))_$(shell date +%F_%H%M%S).log 2>&1
+	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))$(TIMESTAMP).log 2>&1
 
 list_targets:
 	@$(MAKE) -pn none | grep -o -E '^[a-z][a-z_/\.%]*' | grep -v -e '^make' -e '^none' | sort
