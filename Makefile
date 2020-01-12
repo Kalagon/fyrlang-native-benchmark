@@ -5,8 +5,6 @@ ifdef SET_TIMESTAMP
 TIMESTAMP = "_$(shell date +%F_%H%M%S)"
 endif
 
-FYR_NATIVE_MALLOC ?= jemalloc
-
 all: all_manual all_auto
 
 all_auto: \
@@ -50,13 +48,13 @@ simulated/gauss50/bin/gauss50: simulated/gauss50/gauss50.c
 simulated/gauss70/bin/gauss70: simulated/gauss70/gauss70.c
 simulated/tp/bin/tp: simulated/tp/tp.c
 simulated/tp_small/bin/tp_small: simulated/tp_small/tp_small.c
-$(foreach module,$(MODULES) $(GAUSS_MANUAL),simulated/$(module)/bin/$(module)): src/common/*.c src/common/*.h
+$(foreach module,$(MODULES) $(GAUSS_MANUAL),simulated/$(module)/bin/$(module)): src/common/common.a src/common/*.h
 	./compile.sh simulated/$(notdir $@) $(FYR_NATIVE_MALLOC)
 
 optimized/gauss/bin/gauss: optimized/gauss/gauss.c
 optimized/tp/bin/tp: optimized/tp/tp.c
 optimized/tp_small/bin/tp_small: optimized/tp_small/tp_small.c
-$(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): optimized/tp/tp.c src/common/*.c src/common/*.h
+$(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): optimized/tp/tp.c src/common/common.a src/common/*.h
 	./compile.sh optimized/$(notdir $@) $(FYR_NATIVE_MALLOC)
 
 src/common/common.a: src/common/*.c
