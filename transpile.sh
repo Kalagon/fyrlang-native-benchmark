@@ -26,3 +26,7 @@ sed -i 's|#include ".*/\(\w*\.h\)"|#include "\1"\n#include "measurement.h"|g' $T
 sed -i 's|#include ".*/lib/runtime\.h"||g' $TRANSPILED_PATH/*.h
 
 sed -i 's|123456789|EVAL_LOOP_RUNS|g' $TRANSPILED_PATH/*.c
+
+mkdir -p runtime/system
+cp $CACHE/fyrlang/lib/runtime.* runtime/system/
+sed -i 's|#include ".*/lib/runtime\.h"|#include "runtime.h"|g' runtime/system/*.c

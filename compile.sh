@@ -8,6 +8,12 @@ else
 	OPT="-O3"
 fi
 
+if [[ "$SYSTEM_RUNTIME" ]]; then
+	RUNTIME_DIR=${CACHE}/fyrlang/lib
+else
+	RUNTIME_DIR="../../runtime/${FYR_NATIVE_MALLOC}"
+fi
+
 COMPILE_PATH=$1
 if [ -n "$2" ]; then
 	FYR_NATIVE_MALLOC=$2
@@ -23,7 +29,7 @@ cd $COMPILE_PATH
 	-I${FYRLIB_NATIVE}include/$FYR_NATIVE_MALLOC \
 	-include malloc.h \
 	-c \
-	-I${CACHE}/fyrlang/lib/ \
+	-I${RUNTIME_DIR}/ \
 	-include runtime.h \
 	-I../../src/common \
 	*.c
@@ -32,7 +38,7 @@ mkdir -p bin
 /usr/bin/gcc \
 	-o bin/$BIN_NAME \
 	*.o \
-	$CACHE/fyrlang/lib/runtime.a \
+	${RUNTIME_DIR}/runtime.a \
 	$MALLOC_ARCHIVE \
 	../../src/common/measurement.c \
 	-lpthread
