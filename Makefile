@@ -1,5 +1,5 @@
-MODULES = gauss tp tp_small
-GAUSS_MANUAL = gauss70 gauss50 gauss30
+MODULES = tp tp_small
+GAUSS = gauss gauss70 gauss50 gauss30
 
 ifdef SET_TIMESTAMP
 TIMESTAMP = "_$(shell date +%F_%H%M%S)"
@@ -11,7 +11,7 @@ all_auto: \
 	$(foreach module,$(MODULES),transpiled/$(module)/bin/$(module))
 
 all_manual: \
-	$(foreach module,$(MODULES) $(GAUSS_MANUAL),simulated/$(module)/bin/$(module)) \
+	$(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)) \
 	$(foreach module,$(MODULES),optimized/$(module)/bin/$(module))
 
 bench: bench_manual bench_auto
@@ -29,13 +29,13 @@ perf/%: | all_manual all_auto
 	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))_$(FYR_NATIVE_MALLOC)$(TIMESTAMP).log 2>&1
 
 list_targets:
-	@$(MAKE) -pn none | grep -o -E '^[a-z][a-z_/\.%]*' | grep -v -e '^make' -e '^none' | sort
+	@$(MAKE) -pn none | grep -o -E '^[a-z][a-z0-9_/\.%]*' | grep -v -e '^make' -e '^none' | sort
 
 clean:
 	find . -type d -name 'bin' -exec rm -rf {} +
 	find . -type d -name 'pkg' -exec rm -rf {} +
 
-.PHONY: all all_auto all+manual bench bench_auto bench_manual list_targets clean none
+.PHONY: all all_auto all_manual bench bench_auto bench_manual list_targets clean none
 
 
 ##
@@ -48,7 +48,7 @@ simulated/gauss50/bin/gauss50: simulated/gauss50/gauss50.c
 simulated/gauss70/bin/gauss70: simulated/gauss70/gauss70.c
 simulated/tp/bin/tp: simulated/tp/tp.c
 simulated/tp_small/bin/tp_small: simulated/tp_small/tp_small.c
-$(foreach module,$(MODULES) $(GAUSS_MANUAL),simulated/$(module)/bin/$(module)): src/common/common.a src/common/*.h
+$(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)): src/common/common.a src/common/*.h
 	./compile.sh simulated/$(notdir $@) $(FYR_NATIVE_MALLOC)
 
 optimized/gauss/bin/gauss: optimized/gauss/gauss.c
