@@ -1,4 +1,6 @@
 MODULES = gauss tp tp_small
+GAUSS_MANUAL = gauss70 gauss50 gauss30
+
 ifdef SET_TIMESTAMP
 TIMESTAMP = "_$(shell date +%F_%H%M%S)"
 endif
@@ -9,15 +11,19 @@ all_auto: \
 	$(foreach module,$(MODULES),transpiled/$(module)/bin/$(module))
 
 all_manual: \
-	$(foreach module,$(MODULES),simulated/$(module)/bin/$(module)) \
+	$(foreach module,$(MODULES) $(GAUSS_MANUAL),simulated/$(module)/bin/$(module)) \
 	$(foreach module,$(MODULES),optimized/$(module)/bin/$(module))
 
-bench: \
-	$(foreach module,$(MODULES),perf/transpiled/$(module)) \
-	$(foreach module,$(MODULES),perf/simulated/$(module)) \
+bench: bench_manual bench_auto
+
+bench_auto: all_auto \
+	$(foreach module,$(MODULES),perf/transpiled/$(module))
+
+bench_manual: all_manual \
+	$(foreach module,$(MODULES) $(GAUSS_MANUAL),perf/simulated/$(module)) \
 	$(foreach module,$(MODULES),perf/optimized/$(module))
 
-perf/%: all_manual
+perf/%: | all_manual all_auto
 	mkdir -p logs/perf/$(notdir $@)
 	perf stat -d -r 10 --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
 	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))$(TIMESTAMP).log 2>&1
@@ -25,7 +31,11 @@ perf/%: all_manual
 list_targets:
 	@$(MAKE) -pn none | grep -o -E '^[a-z][a-z_/\.%]*' | grep -v -e '^make' -e '^none' | sort
 
-.PHONY: all all_manual bench list_targets none
+clean:
+	find . -type d -name 'bin' -exec rm -rf {} +
+	find . -type d -name 'pkg' -exec rm -rf {} +
+
+.PHONY: all all_auto all+manual bench bench_auto bench_manual list_targets clean none
 
 
 ##
@@ -33,9 +43,12 @@ list_targets:
 ##
 
 simulated/gauss/bin/gauss: simulated/gauss/gauss.c
+simulated/gauss30/bin/gauss30: simulated/gauss30/gauss30.c
+simulated/gauss50/bin/gauss50: simulated/gauss50/gauss50.c
+simulated/gauss70/bin/gauss70: simulated/gauss70/gauss70.c
 simulated/tp/bin/tp: simulated/tp/tp.c
 simulated/tp_small/bin/tp_small: simulated/tp_small/tp_small.c
-$(foreach module,$(MODULES),simulated/$(module)/bin/$(module)): src/common/*.c src/common/*.h
+$(foreach module,$(MODULES) $(GAUSS_MANUAL),simulated/$(module)/bin/$(module)): src/common/*.c src/common/*.h
 	./compile.sh simulated/$(notdir $@)
 
 optimized/gauss/bin/gauss: optimized/gauss/gauss.c
