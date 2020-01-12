@@ -2,8 +2,12 @@ MODULES = tp tp_small
 GAUSS = gauss gauss70 gauss50 gauss30
 
 ifdef SET_TIMESTAMP
-TIMESTAMP = "_$(shell date +%F_%H%M%S)"
+TIMESTAMP = _$(shell date +%F_%H%M%S)
 endif
+ifdef FYR_NATIVE_MALLOC
+MALLOC = _$(FYR_NATIVE_MALLOC)
+endif
+LOGSTAMP = $(MALLOC)$(TIMESTAMP)
 
 all: all_manual all_auto
 
@@ -26,7 +30,7 @@ bench_manual: all_manual \
 perf/%: | all_manual all_auto
 	mkdir -p logs/perf/$(notdir $@)
 	perf stat -d -r 10 --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
-	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))_$(FYR_NATIVE_MALLOC)$(TIMESTAMP).log 2>&1
+	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))$(LOGSTAMP).log 2>&1
 
 list_targets:
 	@$(MAKE) -pn none | grep -o -E '^[a-z][a-z0-9_/\.%]*' | grep -v -e '^make' -e '^none' | sort
