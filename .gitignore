@@ -1,4 +1,6 @@
 /.env
+/.vscode/settings.json
+/runtime/system/
 **/bin/
 **/pkg/
 *.o
