@@ -18,19 +18,39 @@ all_manual: \
 	$(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)) \
 	$(foreach module,$(MODULES),optimized/$(module)/bin/$(module))
 
-bench: bench_manual bench_auto
+bench_all: bench_cpu bench_mem_manual bench_time_manual
+bench_cpu: bench_cpu_auto bench_cpu_manual
 
-bench_auto: all_auto \
+bench_cpu_auto: all_auto \
 	$(foreach module,$(MODULES),perf/transpiled/$(module))
 
-bench_manual: all_manual \
-	$(foreach module,$(MODULES) $(GAUSS_MANUAL),perf/simulated/$(module)) \
-	$(foreach module,$(MODULES),perf/optimized/$(module))
+bench_cpu_manual: all_manual \
+	$(foreach module,$(MODULES) $(GAUSS),perf/simulated/$(module)) \
+	$(foreach module,$(MODULES),perf/optimized/$(module)) \
+	| bench_cpu_auto
+
+bench_mem_manual: all_manual \
+	$(foreach module,$(MODULES) $(GAUSS),mem/simulated/$(module)) \
+	$(foreach module,$(MODULES),mem/optimized/$(module)) \
+	| bench_cpu_auto bench_cpu_manual
+
+bench_time_manual: all_manual \
+	$(foreach module,$(MODULES) $(GAUSS),time/simulated/$(module)) \
+	$(foreach module,$(MODULES),time/optimized/$(module)) \
+	| bench_cpu_auto bench_cpu_manual bench_mem_manual
 
 perf/%: | all_manual all_auto
 	mkdir -p logs/perf/$(notdir $@)
 	perf stat -d -r 10 --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
 	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))$(LOGSTAMP).log 2>&1
+
+time/%: | all_manual all_auto
+	mkdir -p logs/time/$(notdir $@)
+	echo "" | cat > logs/time/$(notdir $@)/$(subst /,,$(subst time/,,$(dir $@)))$(LOGSTAMP).log
+	for (( i=1; i<10; i++ )); do \
+		/usr/bin/time ./$(subst time/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
+		>> logs/time/$(notdir $@)/$(subst /,,$(subst time/,,$(dir $@)))$(LOGSTAMP).log 2>&1; \
+	done;
 
 list_targets:
 	@$(MAKE) -pn none | grep -o -E '^[a-z][a-z0-9_/\.%]*' | grep -v -e '^make' -e '^none' | sort
@@ -83,3 +103,14 @@ transpiled/tp_small/tp_small.c: src/tp_small/main.fyr
 $(foreach module,$(MODULES),transpiled/$(module)/$(module).c):
 	./transpile.sh src/$(basename $(notdir $@))
 endif
+
+##
+# Heap profiling
+##
+
+$(foreach module,$(MODULES),mem/optimized/$(module)) $(foreach module,$(MODULES) $(GAUSS),mem/simulated/$(module)):
+	mkdir -p logs/$@
+	$(if $(findstring $(FYR_NATIVE_MALLOC),tcmalloc),,LD_PRELOAD=/usr/lib/libtcmalloc.so) \
+	HEAPPROFILE=logs/$@/$(notdir $@)$(LOGSTAMP).hprof \
+	HEAP_PROFILE_MMAP=TRUE \
+	$(patsubst mem/%,%,$@)/bin/$(notdir $@)

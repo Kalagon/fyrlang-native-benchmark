@@ -13,20 +13,28 @@ if [ -n "$2" ]; then
 	FYR_NATIVE_MALLOC=$2
 fi
 
+case "$FYR_NATIVE_MALLOC" in
+"tcmalloc")
+	COMPILER=g++
+	EXTRA_LIBS="-ltcmalloc -lunwind"
+	;;
+"tcmalloc-static")
+	COMPILER=g++
+	FYR_NATIVE_MALLOC="tcmalloc"
+	MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -ipath "*/*$(uname -s)*$(uname -m)*/lib${FYR_NATIVE_MALLOC}.a"`
+	;;
+*)
+	COMPILER=gcc
+	MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -ipath "*/*$(uname -s)*$(uname -m)*/lib${FYR_NATIVE_MALLOC}.a"`
+esac
+
 if [[ "$SYSTEM_RUNTIME" ]]; then
 	RUNTIME_DIR=${CACHE}/fyrlang/lib
 else
 	RUNTIME_DIR="../../runtime/${FYR_NATIVE_MALLOC}"
 fi
 
-if [[ "$FYR_NATIVE_MALLOC" == "tcmalloc" ]]; then
-	COMPILER=g++
-else
-	COMPILER=gcc
-fi
-
 BIN_NAME=`echo $1 | sed 's#.*/\([a-zA-Z0-9]\+\)/\?#\1#g'`
-MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -ipath "*/*$(uname -s)*$(uname -m)*/lib${FYR_NATIVE_MALLOC}.a"`
 
 # NOTE: we assume that the runtime library has already been compiled
 
@@ -48,4 +56,4 @@ $COMPILER \
 	${RUNTIME_DIR}/runtime.a \
 	$MALLOC_ARCHIVE \
 	../../src/common/common.a \
-	-lpthread
+	$EXTRA_LIBS -lpthread
