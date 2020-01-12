@@ -55,8 +55,10 @@ transpiled/tp_small/bin/tp_small: transpiled/tp_small/tp_small.c
 $(foreach module,$(MODULES),transpiled/$(module)/bin/$(module)):
 	./compile.sh transpiled/$(notdir $@)
 
+ifdef TRANSPILE
 transpiled/gauss/gauss.c: src/gauss/main.fyr
 transpiled/tp/tp.c: src/tp/main.fyr
 transpiled/tp_small/tp_small.c: src/tp_small/main.fyr
 $(foreach module,$(MODULES),transpiled/$(module)/$(module).c):
 	./transpile.sh src/$(basename $(notdir $@))
+endif
