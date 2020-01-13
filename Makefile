@@ -1,4 +1,4 @@
-MODULES = tp tp_small
+MODULES = matrix tp tp_small
 GAUSS = gauss gauss70 gauss50 gauss30
 
 ifdef SET_TIMESTAMP
@@ -70,6 +70,7 @@ simulated/gauss/bin/gauss: simulated/gauss/gauss.c
 simulated/gauss30/bin/gauss30: simulated/gauss30/gauss30.c
 simulated/gauss50/bin/gauss50: simulated/gauss50/gauss50.c
 simulated/gauss70/bin/gauss70: simulated/gauss70/gauss70.c
+simulated/matrix/bin/matrix: simulated/matrix/matrix.c
 simulated/tp/bin/tp: simulated/tp/tp.c
 simulated/tp_small/bin/tp_small: simulated/tp_small/tp_small.c
 $(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)): src/common/common.a src/common/*.h
@@ -91,6 +92,7 @@ src/common/common.a: src/common/*.c
 ##
 
 transpiled/gauss/bin/gauss: transpiled/gauss/gauss.c
+transpiled/matrix/bin/matrix: transpiled/matrix/matrix.c
 transpiled/tp/bin/tp: transpiled/tp/tp.c
 transpiled/tp_small/bin/tp_small: transpiled/tp_small/tp_small.c
 $(foreach module,$(MODULES),transpiled/$(module)/bin/$(module)):
@@ -98,6 +100,7 @@ $(foreach module,$(MODULES),transpiled/$(module)/bin/$(module)):
 
 ifdef TRANSPILE
 transpiled/gauss/gauss.c: src/gauss/main.fyr
+transpiled/matrix/matrix.c: src/matrix/main.fyr
 transpiled/tp/tp.c: src/tp/main.fyr
 transpiled/tp_small/tp_small.c: src/tp_small/main.fyr
 $(foreach module,$(MODULES),transpiled/$(module)/$(module).c):
