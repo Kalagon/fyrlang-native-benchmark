@@ -19,7 +19,7 @@ all_manual: \
 	$(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)) \
 	$(foreach module,$(MODULES),optimized/$(module)/bin/$(module))
 
-bench_all: bench_cpu bench_mem_manual bench_time_manual
+bench_all: bench_cpu bench_flame_manual bench_time_manual
 bench_cpu: bench_cpu_auto bench_cpu_manual
 
 bench_cpu_auto: all_auto \
