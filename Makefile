@@ -19,8 +19,13 @@ all_manual: \
 	$(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)) \
 	$(foreach module,$(MODULES),optimized/$(module)/bin/$(module))
 
-bench_all: bench_cpu bench_flame_manual bench_time_manual
-bench_cpu: bench_cpu_auto bench_cpu_manual
+bench_all_libraries:
+	$(MAKE) -B FYR_NATIVE_MALLOC=jemalloc all
+	$(MAKE) FYR_NATIVE_MALLOC=jemalloc -j1 bench_all
+	$(MAKE) -B FYR_NATIVE_MALLOC=tcmalloc all
+	$(MAKE) FYR_NATIVE_MALLOC=tcmalloc -j1 bench_all
+
+bench_all: bench_cpu_auto bench_cpu_manual bench_flame_manual bench_time_manual
 
 bench_cpu_auto: all_auto \
 	$(foreach module,$(MODULES),perf/transpiled/$(module))
