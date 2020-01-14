@@ -7,9 +7,8 @@ This repository contains the code used to benchmark the [Fyr](https://github.com
 For full functionality the following binaries and libraries need to be provided by the system:
 - gcc
 - [perf](https://perf.wiki.kernel.org/index.php/Main_Page)
+- [Flamegraph](https://github.com/brendangregg/FlameGraph)
 - GNU time
-- [libtcmalloc](https://github.com/gperftools/gperftools)
-	- [pprof](https://github.com/google/pprof) for viewing heap profiles
 - Fyr compiler
 - Fyr native libraries
 

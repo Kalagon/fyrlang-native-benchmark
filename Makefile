@@ -1,6 +1,7 @@
 MODULES = matrix tp tp_small
 GAUSS = gauss gauss70 gauss50 gauss30
 
+TMPFOLDER ?= /tmp/fyrlang-native-benchmark
 ifdef SET_TIMESTAMP
 TIMESTAMP = _$(shell date +%F_%H%M%S)
 endif
@@ -34,6 +35,11 @@ bench_time_manual: all_manual \
 	$(foreach module,$(MODULES),time/optimized/$(module)) \
 	| bench_cpu_auto bench_cpu_manual
 
+bench_flame_manual: all_manual \
+	$(foreach module,$(MODULES) $(GAUSS),flame/simulated/$(module)) \
+	$(foreach module,$(MODULES),flame/optimized/$(module)) \
+	| bench_cpu_auto bench_cpu_manual bench_time_manual
+
 perf/%: | all_manual all_auto
 	mkdir -p logs/perf/$(notdir $@)
 	perf stat -d -r 10 --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
@@ -47,12 +53,22 @@ time/%: | all_manual all_auto
 		>> logs/time/$(notdir $@)/$(subst /,,$(subst time/,,$(dir $@)))$(LOGSTAMP).log 2>&1; \
 	done;
 
+flame/%:
+	mkdir -p logs/flame/$(notdir $@)
+	mkdir -p $(TMPFOLDER)
+	perf record -o $(TMPFOLDER)/$(notdir $@).data --call-graph dwarf ./$(subst flame/,,$(dir $@))$(notdir $@)/bin/$(notdir $@)
+	perf script -i $(TMPFOLDER)/$(notdir $@).data > $(TMPFOLDER)/$(notdir $@).perf
+	stackcollapse-perf.pl $(TMPFOLDER)/$(notdir $@).perf > $(TMPFOLDER)/$(notdir $@).folded
+	flamegraph.pl $(TMPFOLDER)/$(notdir $@).folded > logs/flame/$(notdir $@)/$(subst /,,$(subst flame/,,$(dir $@)))$(LOGSTAMP).svg
+	rm $(TMPFOLDER)/*.data
+
 list_targets:
 	@$(MAKE) -pn none | grep -o -E '^[a-z][a-z0-9_/\.%]*' | grep -v -e '^make' -e '^none' | sort
 
 clean:
 	find . -type d -name 'bin' -exec rm -rf {} +
 	find . -type d -name 'pkg' -exec rm -rf {} +
+	rm $(TMPFOLDER)/*.data $(TMPFOLDER)/*.perf $(TMPFOLDER)/*.folded
 
 .PHONY: all all_auto all_manual bench bench_auto bench_manual list_targets clean none
 
