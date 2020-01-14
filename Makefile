@@ -29,15 +29,10 @@ bench_cpu_manual: all_manual \
 	$(foreach module,$(MODULES),perf/optimized/$(module)) \
 	| bench_cpu_auto
 
-bench_mem_manual: all_manual \
-	$(foreach module,$(MODULES) $(GAUSS),mem/simulated/$(module)) \
-	$(foreach module,$(MODULES),mem/optimized/$(module)) \
-	| bench_cpu_auto bench_cpu_manual
-
 bench_time_manual: all_manual \
 	$(foreach module,$(MODULES) $(GAUSS),time/simulated/$(module)) \
 	$(foreach module,$(MODULES),time/optimized/$(module)) \
-	| bench_cpu_auto bench_cpu_manual bench_mem_manual
+	| bench_cpu_auto bench_cpu_manual
 
 perf/%: | all_manual all_auto
 	mkdir -p logs/perf/$(notdir $@)
@@ -106,14 +101,3 @@ transpiled/tp_small/tp_small.c: src/tp_small/main.fyr
 $(foreach module,$(MODULES),transpiled/$(module)/$(module).c):
 	./transpile.sh src/$(basename $(notdir $@))
 endif
-
-##
-# Heap profiling
-##
-
-$(foreach module,$(MODULES),mem/optimized/$(module)) $(foreach module,$(MODULES) $(GAUSS),mem/simulated/$(module)):
-	mkdir -p logs/$@
-	$(if $(findstring $(FYR_NATIVE_MALLOC),tcmalloc),,LD_PRELOAD=/usr/lib/libtcmalloc.so) \
-	HEAPPROFILE=logs/$@/$(notdir $@)$(LOGSTAMP).hprof \
-	HEAP_PROFILE_MMAP=TRUE \
-	$(patsubst mem/%,%,$@)/bin/$(notdir $@)

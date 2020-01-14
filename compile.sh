@@ -16,11 +16,6 @@ fi
 case "$FYR_NATIVE_MALLOC" in
 "tcmalloc")
 	COMPILER=g++
-	EXTRA_LIBS="-ltcmalloc -lunwind"
-	;;
-"tcmalloc-static")
-	COMPILER=g++
-	FYR_NATIVE_MALLOC="tcmalloc"
 	MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -ipath "*/*$(uname -s)*$(uname -m)*/lib${FYR_NATIVE_MALLOC}.a"`
 	;;
 *)
@@ -56,4 +51,4 @@ $COMPILER \
 	${RUNTIME_DIR}/runtime.a \
 	$MALLOC_ARCHIVE \
 	../../src/common/common.a \
-	$EXTRA_LIBS -lpthread
+	-lpthread
