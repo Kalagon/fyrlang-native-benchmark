@@ -1,5 +1,8 @@
 #include "matrix.h"
 #include "measurement.h"
+#ifdef DEBUG
+#include <stdio.h>
+#endif
 
 void __init___80fdbaf177663807a62b7fd44b36b7ed533ba4fe496ece945f2f71b5ec67a3dd() {
 
@@ -16,7 +19,11 @@ void Main_7877ee78375728661b20baa119c27d52e08f8733a4bfab5bb996e913ea1d72d0() {
     uintptr_t v_g_0;
     v_g_0 = 0;
     for (;;) {
+        #ifdef DEBUG
+        bool tmp_1 = v_loop < 3;
+        #else
         bool tmp_1 = v_loop < EVAL_LOOP_RUNS;
+        #endif
         bool tmp_2 = !tmp_1;
         if (tmp_2) {
             break;
@@ -91,8 +98,14 @@ void Main_7877ee78375728661b20baa119c27d52e08f8733a4bfab5bb996e913ea1d72d0() {
                     exit(1);
                 };
                 (((v_m_res.arr)[idx_6]).arr)[idx_8] = tmp_22;
+                #ifdef DEBUG
+                printf("%d\t", tmp_22);
+                #endif
                 v_j++;
             };
+            #ifdef DEBUG
+            printf("\n");
+            #endif
             v_i++;
         };
         v_loop++;
@@ -100,7 +113,6 @@ void Main_7877ee78375728661b20baa119c27d52e08f8733a4bfab5bb996e913ea1d72d0() {
         Free_17cd220e161d0642d8eb85204f15c78e318810795cb3cfa0160f7806603a731a(&v_g_0);
     };
     end();
-
 };
 
 int main(int argc, char **argv) {

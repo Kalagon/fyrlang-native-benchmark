@@ -30,5 +30,6 @@ func Main() {
 		var arr27 []int = [1]
 		var arr28 []int = [1]
 		var arr29 []int = [1]
+		var arr30 []int = [1]
 	}
 }
