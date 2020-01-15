@@ -21,6 +21,7 @@
 			"command": "make",
 			"group": "build",
 			"args": [
+				"-B",
 				"${relativeFileDirname}/bin/${fileBasenameNoExtension}",
 				"DEBUG=yes"
 			],
