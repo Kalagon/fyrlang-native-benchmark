@@ -11,9 +11,10 @@
 			"debugger_args": [
 				"-n"
 			],
-			"target": "./bin/tp",
-			"cwd": "${workspaceRoot}/transpiled/tp",
-			"valuesFormatting": "parseText"
+			"target": "${relativeFileDirname}/bin/${fileBasenameNoExtension}",
+			"cwd": "${workspaceFolder}",
+			"valuesFormatting": "parseText",
+			"preLaunchTask": "make debug"
 		}
 	]
 }

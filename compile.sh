@@ -3,7 +3,7 @@
 source .env
 
 if [[ "$DEBUG" ]]; then
-	OPT="-g -Og" # for debugging
+	OPT="-ggdb -Og -D DEBUG=1" # for debugging
 else
 	OPT="-O3"
 fi
@@ -46,6 +46,7 @@ gcc \
 
 mkdir -p bin
 $COMPILER \
+	$OPT \
 	-o bin/$BIN_NAME \
 	*.o \
 	${RUNTIME_DIR}/runtime.a \

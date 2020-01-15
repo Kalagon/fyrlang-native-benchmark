@@ -85,13 +85,13 @@ simulated/matrix/bin/matrix: simulated/matrix/matrix.c
 simulated/tp/bin/tp: simulated/tp/tp.c
 simulated/tp_small/bin/tp_small: simulated/tp_small/tp_small.c
 $(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)): src/common/common.a src/common/*.h
-	./compile.sh simulated/$(notdir $@) $(FYR_NATIVE_MALLOC)
+	DEBUG="$(DEBUG)" ./compile.sh simulated/$(notdir $@) $(FYR_NATIVE_MALLOC)
 
 optimized/gauss/bin/gauss: optimized/gauss/gauss.c
 optimized/tp/bin/tp: optimized/tp/tp.c
 optimized/tp_small/bin/tp_small: optimized/tp_small/tp_small.c
 $(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): optimized/tp/tp.c src/common/common.a src/common/*.h
-	./compile.sh optimized/$(notdir $@) $(FYR_NATIVE_MALLOC)
+	DEBUG="$(DEBUG)" ./compile.sh optimized/$(notdir $@) $(FYR_NATIVE_MALLOC)
 
 src/common/common.a: src/common/*.c
 	cd src/common
@@ -107,7 +107,7 @@ transpiled/matrix/bin/matrix: transpiled/matrix/matrix.c
 transpiled/tp/bin/tp: transpiled/tp/tp.c
 transpiled/tp_small/bin/tp_small: transpiled/tp_small/tp_small.c
 $(foreach module,$(MODULES),transpiled/$(module)/bin/$(module)):
-	./compile.sh transpiled/$(notdir $@) $(FYR_NATIVE_MALLOC)
+	DEBUG="$(DEBUG)" ./compile.sh transpiled/$(notdir $@) $(FYR_NATIVE_MALLOC)
 
 ifdef TRANSPILE
 transpiled/gauss/gauss.c: src/gauss/main.fyr
