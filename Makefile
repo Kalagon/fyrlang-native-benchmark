@@ -93,6 +93,7 @@ $(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)): src/com
 	DEBUG="$(DEBUG)" ./compile.sh simulated/$(notdir $@) $(FYR_NATIVE_MALLOC)
 
 optimized/gauss/bin/gauss: optimized/gauss/gauss.c
+optimized/matrix/bin/matrix: optimized/matrix/matrix.c
 optimized/tp/bin/tp: optimized/tp/tp.c
 optimized/tp_small/bin/tp_small: optimized/tp_small/tp_small.c
 $(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): optimized/tp/tp.c src/common/common.a src/common/*.h
