@@ -1,4 +1,4 @@
-MODULES = matrix tp tp_small
+MODULES = matrix tp tp_merge tp_small
 GAUSS = gauss gauss70 gauss50 gauss30
 
 TMPFOLDER ?= /tmp/fyrlang-native-benchmark
@@ -88,6 +88,7 @@ simulated/gauss50/bin/gauss50: simulated/gauss50/gauss50.c
 simulated/gauss70/bin/gauss70: simulated/gauss70/gauss70.c
 simulated/matrix/bin/matrix: simulated/matrix/matrix.c
 simulated/tp/bin/tp: simulated/tp/tp.c
+simulated/tp_merge/bin/tp_merge: simulated/tp_merge/tp_merge.c
 simulated/tp_small/bin/tp_small: simulated/tp_small/tp_small.c
 $(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)): src/common/common.a src/common/*.h
 	DEBUG="$(DEBUG)" ./compile.sh simulated/$(notdir $@) $(FYR_NATIVE_MALLOC)
@@ -95,6 +96,7 @@ $(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)): src/com
 optimized/gauss/bin/gauss: optimized/gauss/gauss.c
 optimized/matrix/bin/matrix: optimized/matrix/matrix.c
 optimized/tp/bin/tp: optimized/tp/tp.c
+optimized/tp_merge/bin/tp_merge: optimized/tp_merge/tp_merge.c
 optimized/tp_small/bin/tp_small: optimized/tp_small/tp_small.c
 $(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): optimized/tp/tp.c src/common/common.a src/common/*.h
 	DEBUG="$(DEBUG)" ./compile.sh optimized/$(notdir $@) $(FYR_NATIVE_MALLOC)
@@ -111,6 +113,7 @@ src/common/common.a: src/common/*.c
 transpiled/gauss/bin/gauss: transpiled/gauss/gauss.c
 transpiled/matrix/bin/matrix: transpiled/matrix/matrix.c
 transpiled/tp/bin/tp: transpiled/tp/tp.c
+transpiled/tp_merge/bin/tp_merge: transpiled/tp_merge/tp_merge.c
 transpiled/tp_small/bin/tp_small: transpiled/tp_small/tp_small.c
 $(foreach module,$(MODULES),transpiled/$(module)/bin/$(module)):
 	DEBUG="$(DEBUG)" ./compile.sh transpiled/$(notdir $@) $(FYR_NATIVE_MALLOC)
@@ -119,6 +122,7 @@ ifdef TRANSPILE
 transpiled/gauss/gauss.c: src/gauss/main.fyr
 transpiled/matrix/matrix.c: src/matrix/main.fyr
 transpiled/tp/tp.c: src/tp/main.fyr
+transpiled/tp_merge/tp_merge.c: src/tp_merge/main.fyr
 transpiled/tp_small/tp_small.c: src/tp_small/main.fyr
 $(foreach module,$(MODULES),transpiled/$(module)/$(module).c):
 	./transpile.sh src/$(basename $(notdir $@))
