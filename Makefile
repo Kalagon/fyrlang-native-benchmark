@@ -22,16 +22,24 @@ all_manual: \
 	$(foreach module,$(MODULES),optimized/$(module)/bin/$(module))
 
 bench_all_libraries:
-	$(MAKE) bench/default
-	$(MAKE) bench/jemalloc
-	$(MAKE) bench/tcmalloc
-	$(MAKE) bench/mimalloc
+	$(MAKE) -s bench/default
+	$(MAKE) -s bench/jemalloc
+	$(MAKE) -s bench/tcmalloc
+	$(MAKE) -s bench/mimalloc
 
-$(foreach lib,$(MALLOC_LIBRARIES),bench/$(lib)):
-	$(MAKE) -B FYR_NATIVE_MALLOC=$(subst bench/,,$@) all
-	sleep 1
-	$(MAKE) FYR_NATIVE_MALLOC=$(subst bench/,,$@) -j1 bench_all
-	$(MAKE) clean
+$(foreach lib,$(MALLOC_LIBRARIES),bench/$(lib)): src/common/common.a
+	@echo Compiling all binaries with lib$(subst bench/,,$@)...
+	@$(MAKE) -s -B FYR_NATIVE_MALLOC=$(subst bench/,,$@) all
+	@echo Done compiling.
+	@sleep 1
+	@echo Starting benchmarks...
+	@$(MAKE) -s FYR_NATIVE_MALLOC=$(subst bench/,,$@) -j1 bench_all
+	@echo Done benchmarking.
+	@echo If the return code is non-zero, please check the logs/ folder for errors and try running benchmarks individually.
+	@echo Cleaning binaries...
+	@$(MAKE) -s clean
+	@echo Done.
+	@echo The benchmark for lib$(subst bench/,,$@) has finished!
 
 bench_all: bench_cpu_auto bench_cpu_manual bench_flame_manual bench_time_manual
 
@@ -107,6 +115,8 @@ list_targets:
 clean:
 	find . -type d -name 'bin' -exec rm -rf {} +
 	find . -type d -name 'pkg' -exec rm -rf {} +
+	find . -type f -name '*.o' -exec rm -rf {} +
+	rm -f src/common/common.a
 	rm -f $(TMPFOLDER)/*.data $(TMPFOLDER)/*.perf $(TMPFOLDER)/*.folded
 
 .PHONY: all all_auto all_manual bench bench_auto bench_manual list_targets clean none
@@ -132,11 +142,10 @@ optimized/matrix/bin/matrix: optimized/matrix/matrix.c
 optimized/tp/bin/tp: optimized/tp/tp.c
 optimized/tp_merge/bin/tp_merge: optimized/tp_merge/tp_merge.c
 optimized/tp_small/bin/tp_small: optimized/tp_small/tp_small.c
-$(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): optimized/tp/tp.c src/common/common.a src/common/*.h
+$(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): src/common/common.a src/common/*.h
 	DEBUG="$(DEBUG)" ./compile.sh optimized/$(notdir $@) $(FYR_NATIVE_MALLOC)
 
 src/common/common.a: src/common/*.c
-	cd src/common
 	$(foreach src,$(wildcard src/common/*.c),gcc -D_FORTIFY_SOURCE=0 -O3 -o $(basename $(src)).o -c $(src);)
 	ar rcs src/common/common.a $(wildcard src/common/*.o)
 
