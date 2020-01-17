@@ -14,12 +14,18 @@ if [ -n "$2" ]; then
 fi
 
 case "$FYR_NATIVE_MALLOC" in
+"default" | "")
+	FYR_NATIVE_MALLOC=default
+	COMPILER=gcc
+	;;
 "tcmalloc")
 	COMPILER=g++
+	MALLOC_INCLUDE="-I${FYRLIB_NATIVE}include/$FYR_NATIVE_MALLOC -include malloc.h"
 	MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -ipath "*/*$(uname -s)*$(uname -m)*/lib${FYR_NATIVE_MALLOC}.a"`
 	;;
 *)
 	COMPILER=gcc
+	MALLOC_INCLUDE="-I${FYRLIB_NATIVE}include/$FYR_NATIVE_MALLOC -include malloc.h"
 	MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -ipath "*/*$(uname -s)*$(uname -m)*/lib${FYR_NATIVE_MALLOC}.a"`
 esac
 
@@ -36,8 +42,7 @@ BIN_NAME=`echo $1 | sed 's#.*/\([a-zA-Z0-9]\+\)/\?#\1#g'`
 cd $COMPILE_PATH
 gcc \
 	-D_FORTIFY_SOURCE=0 $OPT \
-	-I${FYRLIB_NATIVE}include/$FYR_NATIVE_MALLOC \
-	-include malloc.h \
+	$MALLOC_INCLUDE \
 	-c \
 	-I${RUNTIME_DIR}/ \
 	-include runtime.h \
