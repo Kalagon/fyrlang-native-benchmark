@@ -11,8 +11,10 @@ struct groupHeader_4db78c2db99b0ed1e81ab5015e323d4208b3393d4e914d75bf3e32955726a
     struct groupHeader_4db78c2db99b0ed1e81ab5015e323d4208b3393d4e914d75bf3e32955726accc* last;
 };
 void __init___a0deb5ebe09db172d62667761dc6bc16118f6fb5e048a991b1ca841a830f76f0();
-uint8_t* Malloc_5cdcff11cc4fe0b7702dcefd8e40a3205be2181cfbca6974337e1a1f974cd4e8(uint64_t p_count, uint64_t p_size, uintptr_t* p_group);
-void Free_17cd220e161d0642d8eb85204f15c78e318810795cb3cfa0160f7806603a731a(uintptr_t* p_group);
 void Merge_0a07642b5f32c65a63a806dde3e254e9db9e84ab40901a0b432741643f03ac64(uintptr_t* p_gptr1, uintptr_t* p_gptr2);
+uint8_t* Malloc_5cdcff11cc4fe0b7702dcefd8e40a3205be2181cfbca6974337e1a1f974cd4e8(uint64_t p_count, uint64_t p_size, uintptr_t* p_group);
+void __free_40e2201c9898302b9e4bc96dc3d95b74e5c98ab9f0a135b2de6bdd491d8c4fee(uint8_t* p_ptr);
+void Free_17cd220e161d0642d8eb85204f15c78e318810795cb3cfa0160f7806603a731a(uintptr_t* p_group);
+uint8_t* __calloc_25c0811e17cf9d78c27906435785866902f3999ee1490b4a52b7726f1dafea00(uint64_t p_count, uint64_t p_size);
 
 #endif
