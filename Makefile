@@ -76,6 +76,28 @@ flame/%:
 
 
 ##
+# Integrity verification
+##
+
+verify_all:
+	@rm -rf logs/valgrind
+	@echo Building the binaries with the system malloc implementation...
+	@$(MAKE) -s -B FYR_NATIVE_MALLOC=default DEBUG=y all
+	@echo Starting binary memory usage verification...
+	@$(MAKE) verify_program_memory_integrity
+	@echo Done. Check the logs/valgrind folder for reports.
+
+verify_program_memory_integrity: \
+	$(foreach module,$(MODULES) $(GAUSS),valgrind/simulated/$(module)) \
+	$(foreach module,$(MODULES),valgrind/optimized/$(module))
+
+valgrind/%:
+	@mkdir -p logs/valgrind/$(notdir $@)
+	@echo Running valgrind on $(subst valgrind/,,$(dir $@))$(notdir $@)/bin/$(notdir $@)
+	@valgrind --log-file=logs/valgrind/$(notdir $@)/$(subst /,,$(subst valgrind/,,$(dir $@)))$(LOGSTAMP).log \
+	./$(subst valgrind/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) > /dev/null
+
+##
 # Helper functions
 ##
 
