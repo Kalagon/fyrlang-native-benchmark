@@ -31,7 +31,11 @@ void Main_9f65af724f9879704217f793189a9485633ccc3343fe77350bf67ed65ff84005() {
     uintptr_t v_g_2;
     v_g_2 = 0;
     for (;;) {
+        #ifdef DEBUG
+        bool tmp_1 = v_i < 3;
+        #else
         bool tmp_1 = v_i < EVAL_LOOP_RUNS;
+        #endif
         bool tmp_2 = !tmp_1;
         if (tmp_2) {
             break;

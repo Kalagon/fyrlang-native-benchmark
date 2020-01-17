@@ -9,4 +9,4 @@ extern clock_t startTime;
 
 void start();
 void end();
-void print_address(void*);
+void print_address(int, void*);

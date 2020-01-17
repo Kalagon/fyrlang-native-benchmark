@@ -65,7 +65,11 @@ flame/%:
 	perf script -i $(TMPFOLDER)/$(notdir $@).data > $(TMPFOLDER)/$(notdir $@).perf
 	stackcollapse-perf.pl $(TMPFOLDER)/$(notdir $@).perf > $(TMPFOLDER)/$(notdir $@).folded
 	flamegraph.pl $(TMPFOLDER)/$(notdir $@).folded > logs/flame/$(notdir $@)/$(subst /,,$(subst flame/,,$(dir $@)))$(LOGSTAMP).svg
-	rm $(TMPFOLDER)/*.data
+
+
+##
+# Helper functions
+##
 
 list_targets:
 	@$(MAKE) -pn none | grep -o -E '^[a-z][a-z0-9_/\.%]*' | grep -v -e '^make' -e '^none' | sort
@@ -73,7 +77,7 @@ list_targets:
 clean:
 	find . -type d -name 'bin' -exec rm -rf {} +
 	find . -type d -name 'pkg' -exec rm -rf {} +
-	rm $(TMPFOLDER)/*.data $(TMPFOLDER)/*.perf $(TMPFOLDER)/*.folded
+	rm -f $(TMPFOLDER)/*.data $(TMPFOLDER)/*.perf $(TMPFOLDER)/*.folded
 
 .PHONY: all all_auto all_manual bench bench_auto bench_manual list_targets clean none
 

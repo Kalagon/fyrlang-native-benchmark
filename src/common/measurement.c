@@ -18,6 +18,6 @@ void end() {
 #endif
 }
 
-void print_address(void* ptr) {
-    printf("Group starts at %p\n", ptr);
+void print_address(int num, void* ptr) {
+    printf("Group %d starts at %p\n", num, ptr);
 }

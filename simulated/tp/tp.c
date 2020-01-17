@@ -13,7 +13,11 @@ void Main_e2623014893e6b82d1f1ce8ab269c0be12a42bacbcdcbe7ee54a8348eec4b985() {
     v_g_0 = 0;
 
     for (;;) {
+        #ifdef DEBUG
+        bool tmp_1 = v_i < 3;
+        #else
         bool tmp_1 = v_i < EVAL_LOOP_RUNS;
+        #endif
         bool tmp_2 = !tmp_1;
         if (tmp_2) {
             break;

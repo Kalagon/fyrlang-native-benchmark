@@ -51,7 +51,11 @@ void Main_a893a1c3729779a9d1de343fc1ad3c902c58006a1b99d00ad57beb47e8e69d96() {
     uintptr_t v_g_2;
     v_g_2 = 0;
     for (;;) {
+        #ifdef DEBUG
+        bool tmp_3 = v_i < 3;
+        #else
         bool tmp_3 = v_i < GAUSS_EVAL_LOOP_RUNS;
+        #endif
         bool tmp_4 = !tmp_3;
         if (tmp_4) {
             break;
