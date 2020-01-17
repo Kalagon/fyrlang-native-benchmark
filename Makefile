@@ -1,6 +1,8 @@
 MODULES = matrix tp tp_merge tp_small
 GAUSS = gauss gauss70 gauss50 gauss30
 
+MALLOC_LIBRARIES = default jemalloc tcmalloc mimalloc
+
 TMPFOLDER ?= /tmp/fyrlang-native-benchmark
 ifdef SET_TIMESTAMP
 TIMESTAMP = _$(shell date +%F_%H%M%S)
@@ -20,10 +22,16 @@ all_manual: \
 	$(foreach module,$(MODULES),optimized/$(module)/bin/$(module))
 
 bench_all_libraries:
-	$(MAKE) -B FYR_NATIVE_MALLOC=jemalloc all
-	$(MAKE) FYR_NATIVE_MALLOC=jemalloc -j1 bench_all
-	$(MAKE) -B FYR_NATIVE_MALLOC=tcmalloc all
-	$(MAKE) FYR_NATIVE_MALLOC=tcmalloc -j1 bench_all
+	$(MAKE) bench/default
+	$(MAKE) bench/jemalloc
+	$(MAKE) bench/tcmalloc
+	$(MAKE) bench/mimalloc
+
+$(foreach lib,$(MALLOC_LIBRARIES),bench/$(lib)):
+	$(MAKE) -B FYR_NATIVE_MALLOC=$(subst bench/,,$@) all
+	sleep 1
+	$(MAKE) FYR_NATIVE_MALLOC=$(subst bench/,,$@) -j1 bench_all
+	$(MAKE) clean
 
 bench_all: bench_cpu_auto bench_cpu_manual bench_flame_manual bench_time_manual
 
