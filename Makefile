@@ -147,7 +147,7 @@ $(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): src/common/commo
 
 src/common/common.a: src/common/*.c
 	$(foreach src,$(wildcard src/common/*.c),gcc -D_FORTIFY_SOURCE=0 -O3 -o $(basename $(src)).o -c $(src);)
-	ar rcs src/common/common.a $(wildcard src/common/*.o)
+	ar rcs src/common/common.a $(addsuffix .o,$(basename $(wildcard src/common/*.c)))
 
 ##
 # Transpile targets; these are only used to generate the C code and verify general viability of the resulting binaries
