@@ -11,15 +11,21 @@ ifdef FYR_NATIVE_MALLOC
 MALLOC = _$(FYR_NATIVE_MALLOC)
 endif
 LOGSTAMP = $(MALLOC)$(TIMESTAMP)
+ifneq '$(FYR_NATIVE_MALLOC)' 'default'
+FYRLIB_NATIVE = $(subst FYRLIB_NATIVE=,,$(shell grep '^FYRLIB_NATIVE' .env))
+MALLOC_INCLUDE = -I$(FYRLIB_NATIVE)/include/$(subst runtime/,,$(dir $@)) -include malloc.h
+endif
 
-all: all_manual all_auto
+all: all_manual all_auto all_runtimes
 
 all_auto: \
-	$(foreach module,$(MODULES),transpiled/$(module)/bin/$(module))
+	$(foreach module,$(MODULES),transpiled/$(module)/bin/$(module)) \
+	| all_runtimes
 
 all_manual: \
 	$(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)) \
-	$(foreach module,$(MODULES),optimized/$(module)/bin/$(module))
+	$(foreach module,$(MODULES),optimized/$(module)/bin/$(module)) \
+	| all_runtimes
 
 bench_all_libraries:
 	$(MAKE) -s bench/default
@@ -27,7 +33,7 @@ bench_all_libraries:
 	$(MAKE) -s bench/tcmalloc
 	$(MAKE) -s bench/mimalloc
 
-$(foreach lib,$(MALLOC_LIBRARIES),bench/$(lib)): src/common/common.a
+$(foreach lib,$(MALLOC_LIBRARIES),bench/$(lib)): src/common/common.a $(addsuffix  .a,$(basename $(wildcard runtime/*/runtime.c)))
 	@echo Compiling all binaries with lib$(subst bench/,,$@)...
 	@$(MAKE) -s -B FYR_NATIVE_MALLOC=$(subst bench/,,$@) all
 	@echo Done compiling.
@@ -61,12 +67,12 @@ bench_flame_manual: all_manual \
 	$(foreach module,$(MODULES),flame/optimized/$(module)) \
 	| bench_cpu_auto bench_cpu_manual bench_time_manual
 
-perf/%: | all_manual all_auto
+perf/%: | all_manual all_auto all_runtimes
 	mkdir -p logs/perf/$(notdir $@)
 	perf stat -d -r 10 --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
 	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))$(LOGSTAMP).log 2>&1
 
-time/%: | all_manual all_auto
+time/%: | all_manual all_auto all_runtimes
 	mkdir -p logs/time/$(notdir $@)
 	echo "" | cat > logs/time/$(notdir $@)/$(subst /,,$(subst time/,,$(dir $@)))$(LOGSTAMP).log
 	for (( i=1; i<10; i++ )); do \
@@ -74,7 +80,7 @@ time/%: | all_manual all_auto
 		>> logs/time/$(notdir $@)/$(subst /,,$(subst time/,,$(dir $@)))$(LOGSTAMP).log 2>&1; \
 	done;
 
-flame/%:
+flame/%: | all_manual all_auto all_runtimes
 	mkdir -p logs/flame/$(notdir $@)
 	mkdir -p $(TMPFOLDER)
 	perf record -o $(TMPFOLDER)/$(notdir $@).data --call-graph dwarf ./$(subst flame/,,$(dir $@))$(notdir $@)/bin/$(notdir $@)
@@ -116,7 +122,7 @@ clean:
 	find . -type d -name 'bin' -exec rm -rf {} +
 	find . -type d -name 'pkg' -exec rm -rf {} +
 	find . -type f -name '*.o' -exec rm -rf {} +
-	rm -f src/common/common.a
+	find . -type f -name '*.a' -exec rm -rf {} +
 	rm -f $(TMPFOLDER)/*.data $(TMPFOLDER)/*.perf $(TMPFOLDER)/*.folded
 
 .PHONY: all all_auto all_manual bench bench_auto bench_manual list_targets clean none
@@ -170,3 +176,21 @@ transpiled/tp_small/tp_small.c: src/tp_small/main.fyr
 $(foreach module,$(MODULES),transpiled/$(module)/$(module).c):
 	./transpile.sh src/$(basename $(notdir $@))
 endif
+
+##
+# Runtime
+##
+
+all_runtimes: \
+	runtime/default/runtime.a \
+	runtime/jemalloc/runtime.a \
+	runtime/tcmalloc/runtime.a \
+	runtime/mimalloc/runtime.a
+
+runtime/default/runtime.a:
+	gcc -D_FORTIFY_SOURCE=0 -O3 -c -o $(basename $@).o -I$(dir $@) $(basename $@).c
+	ar rcs $@ $(basename $@).o
+
+runtime/%/runtime.a:
+	gcc -D_FORTIFY_SOURCE=0 -O3 -c -o $(basename $@).o $(MALLOC_INCLUDE) -I$(dir $@) $(basename $@).c
+	ar rcs $@ $(basename $@).o
