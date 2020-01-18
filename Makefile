@@ -16,7 +16,9 @@ FYRLIB_NATIVE = $(subst FYRLIB_NATIVE=,,$(shell grep '^FYRLIB_NATIVE' .env))
 MALLOC_INCLUDE = -I$(FYRLIB_NATIVE)/include/$(subst runtime/,,$(dir $@)) -include malloc.h
 endif
 
-all: all_manual all_auto all_runtimes
+all:
+	$(MAKE) all_runtimes
+	$(MAKE) all_manual all_auto
 
 all_auto: \
 	$(foreach module,$(MODULES),transpiled/$(module)/bin/$(module)) \
