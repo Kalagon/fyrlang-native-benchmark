@@ -5,6 +5,8 @@
 **/pkg/
 *.a
 *.o
+vgcore.*
+.gdb_history
 
 # exclude logs folder for now
 /logs
