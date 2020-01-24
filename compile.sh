@@ -3,9 +3,9 @@
 source .env
 
 if [[ "$DEBUG" ]]; then
-	OPT="-ggdb -Og -D DEBUG=1" # for debugging
+	OPTIMIZATION="-ggdb -Og -D DEBUG=1" # for debugging
 else
-	OPT="-O3"
+	OPTIMIZATION="-O3"
 fi
 
 COMPILE_PATH=$1
@@ -23,6 +23,9 @@ case "$FYR_NATIVE_MALLOC" in
 	MALLOC_INCLUDE="-I${FYRLIB_NATIVE}include/$FYR_NATIVE_MALLOC -include malloc.h"
 	MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -ipath "*/*$(uname -s)*$(uname -m)*/lib${FYR_NATIVE_MALLOC}.a"`
 	;;
+"rpmalloc")
+	OPTIONAL="-DRPMALLOC"
+	;&
 *)
 	COMPILER=gcc
 	MALLOC_INCLUDE="-I${FYRLIB_NATIVE}include/$FYR_NATIVE_MALLOC -include malloc.h"
@@ -41,7 +44,7 @@ BIN_NAME=`echo $1 | sed 's#.*/\([a-zA-Z0-9]\+\)/\?#\1#g'`
 
 cd $COMPILE_PATH
 gcc \
-	-D_FORTIFY_SOURCE=0 $OPT \
+	-D_FORTIFY_SOURCE=0 $OPTIMIZATION $OPTIONAL \
 	$MALLOC_INCLUDE \
 	-c \
 	-I${RUNTIME_DIR}/ \
@@ -51,7 +54,7 @@ gcc \
 
 mkdir -p bin
 $COMPILER \
-	$OPT \
+	$OPTIMIZATION \
 	-o bin/$BIN_NAME \
 	*.o \
 	${RUNTIME_DIR}/runtime.a \

@@ -126,8 +126,14 @@ void Main_9f65af724f9879704217f793189a9485633ccc3343fe77350bf67ed65ff84005() {
 };
 
 int main(int argc, char **argv) {
+    #ifdef RPMALLOC
+    rpmalloc_initialize();
+    #endif
     __init___a0deb5ebe09db172d62667761dc6bc16118f6fb5e048a991b1ca841a830f76f0();
     __init___c2b729f3e2021ef03b9698daf09eed0c1577471acac7de730e84c919fe24300e();
     Main_9f65af724f9879704217f793189a9485633ccc3343fe77350bf67ed65ff84005();
+    #ifdef RPMALLOC
+    rpmalloc_finalize();
+    #endif
     return 0;
 }

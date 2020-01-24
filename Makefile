@@ -1,7 +1,7 @@
 MODULES = matrix tp tp_merge tp_small
 GAUSS = gauss gauss70 gauss50 gauss30
 
-MALLOC_LIBRARIES = default jemalloc tcmalloc mimalloc
+MALLOC_LIBRARIES = default jemalloc tcmalloc mimalloc rpmalloc
 
 TMPFOLDER ?= /tmp/fyrlang-native-benchmark
 ifdef SET_TIMESTAMP
@@ -39,6 +39,7 @@ bench_all_libraries:
 	$(MAKE) -s bench/jemalloc
 	$(MAKE) -s bench/tcmalloc
 	$(MAKE) -s bench/mimalloc
+	$(MAKE) -s bench/rpmalloc
 
 $(foreach lib,$(MALLOC_LIBRARIES),bench/$(lib)): src/common/common.a $(addsuffix  .a,$(basename $(wildcard runtime/*/runtime.c)))
 	@echo Compiling all binaries with lib$(subst bench/,,$@)...
@@ -195,7 +196,8 @@ all_runtimes: \
 	runtime/default/runtime.a \
 	runtime/jemalloc/runtime.a \
 	runtime/tcmalloc/runtime.a \
-	runtime/mimalloc/runtime.a
+	runtime/mimalloc/runtime.a \
+	runtime/rpmalloc/runtime.a
 
 runtime/default/runtime.a:
 	gcc -D_FORTIFY_SOURCE=0 $(OPT) -c -o $(basename $@).o -I$(dir $@) $(basename $@).c
