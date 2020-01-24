@@ -57,7 +57,7 @@ $(foreach lib,$(MALLOC_LIBRARIES),bench/$(lib)): src/common/common.a $(addsuffix
 ifneq '$(patsubst arm%,arm,$(shell uname -m))' 'arm'
 INCLUDE_BENCH = bench_flame_manual
 endif
-bench_all: bench_cpu_auto bench_cpu_manual $(INCLUDE_BENCH) bench_time_manual
+bench_all: bench_cpu_manual $(INCLUDE_BENCH) bench_time_manual
 
 bench_cpu_auto: all_auto \
 	$(foreach module,$(MODULES),perf/transpiled/$(module))
