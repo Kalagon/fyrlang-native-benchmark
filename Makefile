@@ -65,25 +65,24 @@ bench_cpu_auto: all_auto \
 
 bench_cpu_manual: all_manual \
 	$(foreach module,$(MODULES) $(GAUSS),perf/simulated/$(module)) \
-	$(foreach module,$(MODULES),perf/optimized/$(module)) \
-	| bench_cpu_auto
+	$(foreach module,$(MODULES),perf/optimized/$(module))
 
 bench_time_manual: all_manual \
 	$(foreach module,$(MODULES) $(GAUSS),time/simulated/$(module)) \
 	$(foreach module,$(MODULES),time/optimized/$(module)) \
-	| bench_cpu_auto bench_cpu_manual
+	| bench_cpu_manual
 
 bench_flame_manual: all_manual \
 	$(foreach module,$(MODULES) $(GAUSS),flame/simulated/$(module)) \
 	$(foreach module,$(MODULES),flame/optimized/$(module)) \
-	| bench_cpu_auto bench_cpu_manual bench_time_manual
+	| bench_cpu_manual bench_time_manual
 
-perf/%: | all_manual all_auto all_runtimes
+perf/%: | all_manual all_runtimes
 	mkdir -p logs/perf/$(notdir $@)
 	perf stat -d -r 10 --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
 	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))$(LOGSTAMP).log 2>&1
 
-time/%: | all_manual all_auto all_runtimes
+time/%: | all_manual all_runtimes
 	mkdir -p logs/time/$(notdir $@)
 	echo "" | cat > logs/time/$(notdir $@)/$(subst /,,$(subst time/,,$(dir $@)))$(LOGSTAMP).log
 	for (( i=1; i<10; i++ )); do \
@@ -91,7 +90,7 @@ time/%: | all_manual all_auto all_runtimes
 		>> logs/time/$(notdir $@)/$(subst /,,$(subst time/,,$(dir $@)))$(LOGSTAMP).log 2>&1; \
 	done;
 
-flame/%: | all_manual all_auto all_runtimes
+flame/%: | all_manual all_runtimes
 	mkdir -p logs/flame/$(notdir $@)
 	mkdir -p $(TMPFOLDER)
 	perf record -o $(TMPFOLDER)/$(notdir $@).data --call-graph dwarf ./$(subst flame/,,$(dir $@))$(notdir $@)/bin/$(notdir $@)
