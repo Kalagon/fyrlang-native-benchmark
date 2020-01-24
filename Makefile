@@ -15,6 +15,11 @@ ifneq '$(FYR_NATIVE_MALLOC)' 'default'
 FYRLIB_NATIVE = $(subst FYRLIB_NATIVE=,,$(shell grep '^FYRLIB_NATIVE' .env))
 MALLOC_INCLUDE = -I$(FYRLIB_NATIVE)/include/$(subst runtime/,,$(dir $@)) -include malloc.h
 endif
+ifdef DEBUG
+OPT = -O3
+else
+OPT = -Og -g
+endif
 
 all:
 	$(MAKE) all_runtimes
@@ -157,7 +162,7 @@ $(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): src/common/commo
 	DEBUG="$(DEBUG)" ./compile.sh optimized/$(notdir $@) $(FYR_NATIVE_MALLOC)
 
 src/common/common.a: src/common/*.c
-	$(foreach src,$(wildcard src/common/*.c),gcc -D_FORTIFY_SOURCE=0 -O3 -o $(basename $(src)).o -c $(src);)
+	$(foreach src,$(wildcard src/common/*.c),gcc -D_FORTIFY_SOURCE=0 $(OPT) -o $(basename $(src)).o -c $(src);)
 	ar rcs src/common/common.a $(addsuffix .o,$(basename $(wildcard src/common/*.c)))
 
 ##
@@ -193,9 +198,9 @@ all_runtimes: \
 	runtime/mimalloc/runtime.a
 
 runtime/default/runtime.a:
-	gcc -D_FORTIFY_SOURCE=0 -O3 -c -o $(basename $@).o -I$(dir $@) $(basename $@).c
+	gcc -D_FORTIFY_SOURCE=0 $(OPT) -c -o $(basename $@).o -I$(dir $@) $(basename $@).c
 	ar rcs $@ $(basename $@).o
 
 runtime/%/runtime.a:
-	gcc -D_FORTIFY_SOURCE=0 -O3 -c -o $(basename $@).o $(MALLOC_INCLUDE) -I$(dir $@) $(basename $@).c
+	gcc -D_FORTIFY_SOURCE=0 $(OPT) -c -o $(basename $@).o $(MALLOC_INCLUDE) -I$(dir $@) $(basename $@).c
 	ar rcs $@ $(basename $@).o
