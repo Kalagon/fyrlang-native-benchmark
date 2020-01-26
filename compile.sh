@@ -20,16 +20,16 @@ case "$FYR_NATIVE_MALLOC" in
 	;;
 "tcmalloc")
 	COMPILER=g++
-	MALLOC_INCLUDE="-I${FYRLIB_NATIVE}include/$FYR_NATIVE_MALLOC -include malloc.h"
-	MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -ipath "*/*$(uname -s)*$(uname -m)*/lib${FYR_NATIVE_MALLOC}.a"`
+	MALLOC_INCLUDE="-I${FYRLIB_NATIVE}/include/$FYR_NATIVE_MALLOC -include malloc.h"
+	MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -iregex "${FYRLIB_NATIVE}/?lib/.*$(uname -s)-$(uname -m).*/lib${FYR_NATIVE_MALLOC}.a"`
 	;;
 "rpmalloc")
 	OPTIONAL="-DRPMALLOC"
 	;&
 *)
 	COMPILER=gcc
-	MALLOC_INCLUDE="-I${FYRLIB_NATIVE}include/$FYR_NATIVE_MALLOC -include malloc.h"
-	MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -ipath "*/*$(uname -s)*$(uname -m)*/lib${FYR_NATIVE_MALLOC}.a"`
+	MALLOC_INCLUDE="-I${FYRLIB_NATIVE}/include/$FYR_NATIVE_MALLOC -include malloc.h"
+	MALLOC_ARCHIVE=`find $FYRLIB_NATIVE -iregex "${FYRLIB_NATIVE}/?lib/.*$(uname -s)-$(uname -m).*/lib${FYR_NATIVE_MALLOC}.a"`
 esac
 
 if [[ "$SYSTEM_RUNTIME" ]]; then
