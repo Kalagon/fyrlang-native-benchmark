@@ -16,9 +16,9 @@ FYRLIB_NATIVE = $(subst FYRLIB_NATIVE=,,$(shell grep '^FYRLIB_NATIVE' .env))
 MALLOC_INCLUDE = -I$(FYRLIB_NATIVE)/include/$(subst runtime/,,$(dir $@)) -include malloc.h
 endif
 ifdef DEBUG
-OPT = -O3
-else
 OPT = -Og -g
+else
+OPT = -O3
 endif
 
 all:
