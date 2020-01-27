@@ -1,4 +1,4 @@
-MODULES = matrix tp tp_merge tp_small merge
+MODULES = matrix tp tp_merge tp_small merge merge_small
 GAUSS = gauss gauss70 gauss50 gauss30
 
 MALLOC_LIBRARIES = default jemalloc tcmalloc mimalloc rpmalloc
@@ -23,7 +23,7 @@ endif
 
 all:
 	$(MAKE) all_runtimes
-	$(MAKE) all_manual all_auto
+	$(MAKE) all_manual
 
 all_auto: \
 	$(foreach module,$(MODULES),transpiled/$(module)/bin/$(module)) \
@@ -147,6 +147,8 @@ simulated/gauss30/bin/gauss30: simulated/gauss30/gauss30.c
 simulated/gauss50/bin/gauss50: simulated/gauss50/gauss50.c
 simulated/gauss70/bin/gauss70: simulated/gauss70/gauss70.c
 simulated/matrix/bin/matrix: simulated/matrix/matrix.c
+simulated/merge/bin/merge: simulated/merge/merge.c
+simulated/merge_small/bin/merge_small: simulated/merge_small/merge_small.c
 simulated/tp/bin/tp: simulated/tp/tp.c
 simulated/tp_merge/bin/tp_merge: simulated/tp_merge/tp_merge.c
 simulated/tp_small/bin/tp_small: simulated/tp_small/tp_small.c
@@ -155,6 +157,8 @@ $(foreach module,$(MODULES) $(GAUSS),simulated/$(module)/bin/$(module)): src/com
 
 optimized/gauss/bin/gauss: optimized/gauss/gauss.c
 optimized/matrix/bin/matrix: optimized/matrix/matrix.c
+optimized/merge/bin/merge: optimized/merge/merge.c
+optimized/merge_small/bin/merge_small: optimized/merge_small/merge_small.c
 optimized/tp/bin/tp: optimized/tp/tp.c
 optimized/tp_merge/bin/tp_merge: optimized/tp_merge/tp_merge.c
 optimized/tp_small/bin/tp_small: optimized/tp_small/tp_small.c
@@ -171,6 +175,7 @@ src/common/common.a: src/common/*.c
 
 transpiled/gauss/bin/gauss: transpiled/gauss/gauss.c
 transpiled/matrix/bin/matrix: transpiled/matrix/matrix.c
+transpiled/merge/bin/merge: transpiled/merge/merge.c
 transpiled/tp/bin/tp: transpiled/tp/tp.c
 transpiled/tp_merge/bin/tp_merge: transpiled/tp_merge/tp_merge.c
 transpiled/tp_small/bin/tp_small: transpiled/tp_small/tp_small.c
@@ -180,6 +185,7 @@ $(foreach module,$(MODULES),transpiled/$(module)/bin/$(module)):
 ifdef TRANSPILE
 transpiled/gauss/gauss.c: src/gauss/main.fyr
 transpiled/matrix/matrix.c: src/matrix/main.fyr
+transpiled/merge/merge.c: src/merge/main.fyr
 transpiled/tp/tp.c: src/tp/main.fyr
 transpiled/tp_merge/tp_merge.c: src/tp_merge/main.fyr
 transpiled/tp_small/tp_small.c: src/tp_small/main.fyr
