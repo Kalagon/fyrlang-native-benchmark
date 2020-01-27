@@ -1,4 +1,5 @@
 #include <time.h>
+#include <stdint.h>
 
 #define EVAL_LOOP_RUNS 100000
 #define GAUSS_EVAL_LOOP_RUNS 1000
@@ -10,3 +11,6 @@ extern clock_t startTime;
 void start();
 void end();
 void print_address(int, void*);
+
+uint8_t* manual_calloc(uint64_t, uint64_t);
+void manual_free_all(uint8_t**, int);

@@ -162,7 +162,7 @@ $(foreach module,$(MODULES),optimized/$(module)/bin/$(module)): src/common/commo
 	DEBUG="$(DEBUG)" ./compile.sh optimized/$(notdir $@) $(FYR_NATIVE_MALLOC)
 
 src/common/common.a: src/common/*.c
-	$(foreach src,$(wildcard src/common/*.c),gcc -D_FORTIFY_SOURCE=0 $(OPT) -o $(basename $(src)).o -c $(src);)
+	$(foreach src,$(wildcard src/common/*.c),gcc -D_FORTIFY_SOURCE=0 $(OPT) -o $(basename $(src)).o -Iruntime/default -c $(src);)
 	ar rcs src/common/common.a $(addsuffix .o,$(basename $(wildcard src/common/*.c)))
 
 ##
