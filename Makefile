@@ -1,4 +1,4 @@
-MODULES = matrix tp tp_merge tp_small
+MODULES = matrix tp tp_merge tp_small merge
 GAUSS = gauss gauss70 gauss50 gauss30
 
 MALLOC_LIBRARIES = default jemalloc tcmalloc mimalloc rpmalloc
