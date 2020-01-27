@@ -41,7 +41,7 @@ bench_all_libraries:
 	$(MAKE) -s bench/mimalloc
 	$(MAKE) -s bench/rpmalloc
 
-$(foreach lib,$(MALLOC_LIBRARIES),bench/$(lib)): src/common/common.a $(addsuffix  .a,$(basename $(wildcard runtime/*/runtime.c)))
+$(foreach lib,$(MALLOC_LIBRARIES),bench/$(lib)): src/common/common.a all_runtimes
 	@echo Compiling all binaries with lib$(subst bench/,,$@)...
 	@$(MAKE) -s -B FYR_NATIVE_MALLOC=$(subst bench/,,$@) all
 	@echo Done compiling.

@@ -3,7 +3,7 @@
 source .env
 
 if [[ "$DEBUG" ]]; then
-	OPTIMIZATION="-ggdb -Og -D DEBUG=1" # for debugging
+	OPTIMIZATION="-ggdb -Og -DDEBUG=1" # for debugging
 else
 	OPTIMIZATION="-O3"
 fi
