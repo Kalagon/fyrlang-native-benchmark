@@ -21,6 +21,10 @@ else
 OPT = -O3
 endif
 
+## benchmark
+SHORT = matrix tp tp_small tp_merge
+PERF_EVENTS =
+
 all:
 	$(MAKE) all_runtimes
 	$(MAKE) all_manual
@@ -79,7 +83,8 @@ bench_flame_manual: all_manual \
 
 perf/%: | all_manual all_runtimes
 	mkdir -p logs/perf/$(notdir $@)
-	perf stat -d -r 10 --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
+	export RUNS=$(if $(findstring $(notdir $@),$(SHORT)),100,10); \
+	perf stat -d -r $$RUNS --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
 	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))$(LOGSTAMP).log 2>&1
 
 time/%: | all_manual all_runtimes
