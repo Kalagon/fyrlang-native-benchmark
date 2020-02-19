@@ -23,7 +23,7 @@ endif
 
 ## benchmark
 SHORT = matrix tp tp_small tp_merge
-PERF_EVENTS =
+PERF_EVENTS = cpu-clock,cycles,duration_time,stalled-cycles-frontend,faults,cache-misses
 
 all:
 	$(MAKE) all_runtimes
@@ -78,13 +78,12 @@ bench_time_manual: all_manual \
 
 bench_flame_manual: all_manual \
 	$(foreach module,$(MODULES) $(GAUSS),flame/simulated/$(module)) \
-	$(foreach module,$(MODULES),flame/optimized/$(module)) \
-	| bench_cpu_manual bench_time_manual
+	$(foreach module,$(MODULES),flame/optimized/$(module))
 
 perf/%: | all_manual all_runtimes
 	mkdir -p logs/perf/$(notdir $@)
 	export RUNS=$(if $(findstring $(notdir $@),$(SHORT)),100,10); \
-	perf stat -d -r $$RUNS --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
+	perf stat -d -r $$RUNS -e $(PERF_EVENTS) --table ./$(subst perf/,,$(dir $@))$(notdir $@)/bin/$(notdir $@) \
 	> logs/perf/$(notdir $@)/$(subst /,,$(subst perf/,,$(dir $@)))$(LOGSTAMP).log 2>&1
 
 time/%: | all_manual all_runtimes
@@ -95,10 +94,10 @@ time/%: | all_manual all_runtimes
 		>> logs/time/$(notdir $@)/$(subst /,,$(subst time/,,$(dir $@)))$(LOGSTAMP).log 2>&1; \
 	done;
 
-flame/%: | all_manual all_runtimes
+flame/%:
 	mkdir -p logs/flame/$(notdir $@)
 	mkdir -p $(TMPFOLDER)
-	perf record -o $(TMPFOLDER)/$(notdir $@).data --call-graph dwarf ./$(subst flame/,,$(dir $@))$(notdir $@)/bin/$(notdir $@)
+	perf record -F 4000 --strict-freq -o $(TMPFOLDER)/$(notdir $@).data --call-graph dwarf ./$(subst flame/,,$(dir $@))$(notdir $@)/bin/$(notdir $@)
 	perf script -i $(TMPFOLDER)/$(notdir $@).data > $(TMPFOLDER)/$(notdir $@).perf
 	stackcollapse-perf.pl $(TMPFOLDER)/$(notdir $@).perf > $(TMPFOLDER)/$(notdir $@).folded
 	flamegraph.pl $(TMPFOLDER)/$(notdir $@).folded > logs/flame/$(notdir $@)/$(subst /,,$(subst flame/,,$(dir $@)))$(LOGSTAMP).svg
