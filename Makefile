@@ -130,6 +130,10 @@ valgrind/%:
 # Helper functions
 ##
 
+flame_server:
+	cd logs/flame && \
+	python -m http.server
+
 list_targets:
 	@$(MAKE) -pn none | grep -o -E '^[a-z][a-z0-9_/\.%]*' | grep -v -e '^make' -e '^none' | sort
 
