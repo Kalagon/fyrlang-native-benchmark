@@ -5,7 +5,7 @@ source .env
 if [[ "$DEBUG" ]]; then
 	OPTIMIZATION="-ggdb -Og -DDEBUG=1" # for debugging
 else
-	OPTIMIZATION="-O3"
+	OPTIMIZATION="-O0"
 fi
 
 COMPILE_PATH=$1

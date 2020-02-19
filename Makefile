@@ -18,7 +18,7 @@ endif
 ifdef DEBUG
 OPT = -Og -g
 else
-OPT = -O3
+OPT = -O0
 endif
 
 ## benchmark
