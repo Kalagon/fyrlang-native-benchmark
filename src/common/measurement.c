@@ -24,7 +24,7 @@ void print_address(int num, void* ptr) {
 
 void print_list(void* ptr) {
     struct ListItem *item = (struct ListItem*)ptr;
-    while (item -> prev != ((struct ListItem*)0)) {
+    while (item != ((struct ListItem*)0)) {
         printf("%d\n", item -> Value);
         item = item -> prev;
     }
